@@ -15,6 +15,15 @@ func makeHandler(fn func(http.ResponseWriter, *http.Request, string)) http.Handl
 	}
 }
 
+func homeHandler(w http.ResponseWriter, r *http.Request, title string) {
+	if title == "" {
+		http.Redirect(w, r, "/view/FrontPage", http.StatusFound)
+		return
+	}
+	p := &Page{Title: title, Body: template.HTML("")}
+	renderTemplate(w, "home", p)
+}
+
 func viewHandler(w http.ResponseWriter, r *http.Request, title string) {
 	p, err := loadPage(title)
 	if err != nil {
