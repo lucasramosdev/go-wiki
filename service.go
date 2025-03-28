@@ -2,7 +2,10 @@ package main
 
 import (
 	"html/template"
+	"log"
 	"os"
+	"sort"
+	"strings"
 )
 
 type Page struct {
@@ -22,7 +25,54 @@ func loadPage(title string) (*Page, error) {
 		return nil, err
 	}
 
-	body := template.HTML(bytes)
+	return &Page{Title: title, Body: template.HTML(bytes)}, nil
+}
 
-	return &Page{Title: title, Body: body}, nil
+func getTopTenOfPage() ([]Page, error) {
+	files, err := getFiles()
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	sort.Slice(files, func(i, j int) bool {
+		return files[i].ModTime().After(files[j].ModTime())
+	})
+
+	pages := selectFiles(files)
+
+	return pages, nil
+}
+
+func getFiles() ([]os.FileInfo, error) {
+
+	file, err := os.Open("./data/")
+
+	if err != nil {
+		return nil, err
+	}
+
+	files, err := file.Readdir(0)
+	return files, err
+}
+
+func selectFiles(files []os.FileInfo) []Page {
+	var pages []Page
+	stopCount := 10
+	if lenInfos := len(files); lenInfos < 10 {
+		stopCount = lenInfos
+	}
+	for index := 0; index < stopCount; {
+		name := files[index].Name()
+		file, err := os.ReadFile("./data/" + name)
+		if err != nil {
+			log.Fatal(err)
+			continue
+		}
+
+		page := &Page{Title: strings.Split(name, ".")[0], Body: template.HTML(file)}
+		pages = append(pages, *page)
+		index++
+	}
+	return pages
 }

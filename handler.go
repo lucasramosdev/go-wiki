@@ -20,8 +20,14 @@ func homeHandler(w http.ResponseWriter, r *http.Request, title string) {
 		http.Redirect(w, r, "/view/FrontPage", http.StatusFound)
 		return
 	}
-	p := &Page{Title: title, Body: template.HTML("")}
-	renderTemplate(w, "home", p)
+	pages, err := getTopTenOfPage()
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	renderTemplate(w, "home", pages)
 }
 
 func viewHandler(w http.ResponseWriter, r *http.Request, title string) {

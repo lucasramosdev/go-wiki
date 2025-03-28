@@ -11,11 +11,26 @@
         <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap" rel="stylesheet">  
     </head>
     
-    <body class="font-[Roboto_Mono] bg-[#F9FAFB]">
-        <main class="flex w-screen h-screen justify-center">
+    <body class="font-[Roboto_Mono] bg-[#F9FAFB] flex justify-center">
+        <main class="flex flex-col w-screen h-screen items-center max-w-[80vw]">
             <div class="block text-center mt-18">
                 <h1 class="text-4xl font-bold tracking-widest">Go Wiki</h1>
                 <h2 class="text-[#5980a6]">Create, edit, view some posts with this elegant wiki</h2>
+            </div>
+            <div class="mt-8 w-max h-max">
+            {{ range .}}
+            <a href="/view/{{.Title}}">
+                <div class="w-[300px] h-[200px] bg-[#FFF] rounded-lg shadow-md p-4 cursor-pointer my-8
+                            hover:scale-105 duration-200
+                            sm:w-[600px]
+                ">
+                    <h3 class="text-base font-bold text-center sm:text-left sm:text-xl ">{{.Title}}</h3>
+                    <p class="mt-2 text-xs text-[#5980A6] line-clamp-8 sm:line-clamp-6 sm:text-sm">
+                        {{printf "%s" .Body}}
+                    </p>
+                </div>
+            </a>
+            {{end}}
             </div>
         </main>
     </body>
